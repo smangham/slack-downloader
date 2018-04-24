@@ -3,7 +3,16 @@ import sys
 import json
 from urllib import request
 
+
 def parse_messages(messages, folder, log):
+    """
+    Parses the messages and saves them to a subfolder
+
+    Args:
+        messages (list): List of json messages
+        folder (string): Name of the channel folder
+        log (list): List of error messages
+    """
     for message in messages:
         if 'file' in message:
             if 'image' in message['file']['mimetype']:
@@ -20,11 +29,13 @@ def parse_messages(messages, folder, log):
 log = []
 folders = []
 
-assert len(sys.argv) > 1, 'You must provide a path to a downloaded Slack data directory, followed by any number of folder names within it!'
+assert len(sys.argv) > 1, \
+    'Usage: python {} [downloaded data directory] [any number of subfolders]'.format(sys.argv[0])
 root_path = sys.argv[1]
-assert os.path.isdir(root_path), 'You must provide a path to a downloaded Slack data directory!'
+assert os.path.isdir(root_path), 'Error: {} is not a directory!'.format(root_path)
 for arg in sys.argv[2:]:
-    assert os.isdir(os.path.join(root_path, arg)), "{} is not a subdirectory within {}!".format(arg, root_path)
+    assert os.path.isdir(os.path.join(root_path, arg)), \
+        "Error: {}/{} is not a directory!".format(root_path, arg)
     folders.append(arg)
 
 for folder in folders:
